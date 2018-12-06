@@ -1,6 +1,7 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import java.awt.GridLayout;
 import java.awt.Insets;
@@ -8,6 +9,7 @@ import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -52,7 +54,7 @@ public class MesonetFrame extends JFrame
 	/**
 	 * combine parameter panel and statistics panel into one - left panel 
 	 */
-	private LeftPanel leftPanel;
+	//private LeftPanel leftPanel;
 
 	/**
 	 * JPanel button panel 
@@ -77,6 +79,8 @@ public class MesonetFrame extends JFrame
 	public Object [] [] dataValues = {{ "Stations","Parameter", "Statistics",  "Value", "Reporting Stations", "Date"}};
 	public JTable table = new JTable((new DefaultTableModel(dataValues, columnNames)));
 	public DefaultTableModel model = (DefaultTableModel)table.getModel();
+	
+	public String fileName = "";
 
 	public MesonetFrame ()
 	{
@@ -156,7 +160,6 @@ public class MesonetFrame extends JFrame
 					System.exit(0);
 				}
 			});
-
 			chooseFile = new JFileChooser(new File("C:\\Users\\mikic\\Documents\\files"));
 			//open file
 
@@ -165,6 +168,26 @@ public class MesonetFrame extends JFrame
 				public void actionPerformed(ActionEvent e)
 				{
 					chooseFile.showOpenDialog(MenuOpenFile);
+					MapData stats = null;
+					try {
+						stats = new MapData(fileName);
+						stats.parseFile();
+						for (String id : paramId)
+						{
+						Statistics r = null;
+						if (stats.type == StatisticsPanel.MAX_BUTTON)
+						{
+							r = stats.getStatistics(StatsType.MAXIMUM, id);
+						}
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+					
+					//MesonetFrame.this.fileName = chooseFile.getSelectedFile().getName();
+					MesonetFrame.this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+					MesonetFrame.this.setCursor(null);
+					
+					
 				}
 			});
 		}
@@ -337,7 +360,7 @@ public class MesonetFrame extends JFrame
 			//buttonPanel = new JPanel();
 			//setLayout(new GridLayout(1,1));
 			setBackground(Color.GRAY);
-			calcButton = new JButton("Calulate");
+			calcButton = new JButton("Calculate");
 			exitButton = new JButton("Exit");
 			add(calcButton);
 			add(exitButton);

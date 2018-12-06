@@ -2,106 +2,155 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.TimeZone;
-
+/**
+ * Class that extends the Observation class in order to provide
+ * information based on dates
+ * @author Miki Cheng
+ * @version 2018-10-29
+ */
 public class Statistics extends Observation
 {
 
+	/**
+	 * Required Date_Time format
+	 */
 	protected String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss z";
+	
+	/**
+	 * Variable used to handle the format of the date
+	 */
 	protected DateTimeFormatter format;
 	
 	/**
-     * utc time zone for date and time
+     * UTC time zone for date and time
      */
 	private GregorianCalendar utcDateTime;
+	
+	/**
+     * ZDT time zone for date and time
+     */
 	private ZonedDateTime zdtDateTime;
+	
 	/**
      * Number of Reporting Stations
      */
 	private int numberOfReportingStations;
+	
 	/**
      * Stat type
      */
 	private StatsType statType;
 	
+	/**
+	 * Constructor for Statistics using dateTime
+     * @param value Double value of the observation
+     * @param stid String stid of the observation
+     * @param dateTime The corresponding dateTime
+     * @param numberOfValidStations the current number of valid stations
+     * @param inStatType the stat type of the data
+     */
 	public Statistics (double value, String stid, GregorianCalendar dateTime, int numberOfValidStations, StatsType inStatType)
 	{
+		// call the super constructor of observation 
 		super(value,stid);
+		
+		// initialize the values to the corresponding variables
 		this.numberOfReportingStations = numberOfValidStations;
 		this.statType = inStatType;
 		this.utcDateTime = dateTime;
 		
 	
 	}
+	
+	/**
+	 * Constructor for Statistics using ZonedDateTime
+     * @param value Double value of the observation
+     * @param stid String stid of the observation
+     * @param dateTime The corresponding dateTime
+     * @param numberOfValidStations the current number of valid stations
+     * @param inStatType the stat type of the data
+     */
 	public Statistics (double value, String stid, ZonedDateTime dateTime, int numberOfValidStations, StatsType inStatType)
 	{
+		// call the super constructor of observation 
 		super(value, stid);
+		
+		// initialize the values to the corresponding variables
 		this.numberOfReportingStations = numberOfValidStations;
 		this.statType = inStatType;
 		this.zdtDateTime = dateTime;
 	}
 	
 	/**
-	 * TODO: createDateFromString method
-     * Return date from string
-     * @param dateTimeStr
+	 * createDateFromString method that returns a GregorianCalendar object based on the date
+     * @param dateTimeStr String that represents the date_Time
+     * @return GregorianCalendar object that represents the date_Time
+     * @throws ParseException throw
      */
-	public void createDateFromString(String dateTimeStr) 
+	public GregorianCalendar createDateFromString(String dateTimeStr) throws ParseException
 	{
-		GregorianCalendar output = new GregorianCalendar();
-	
-		SimpleDateFormat format = new SimpleDateFormat(DATE_TIME_FORMAT);
-		format.setTimeZone(TimeZone.getTimeZone("UTC"));
-		
-		try 
-		{
-			output.setTime(format.parse(dateTimeStr));
-		} 
-		catch (ParseException e) 
-		{
-			e.printStackTrace();
-		}
+		// create the date with the required format 
+        SimpleDateFormat date = new SimpleDateFormat(DATE_TIME_FORMAT);
+        
+        // parses the string to date
+        Date newDate = date.parse(dateTimeStr);
+
+        // Create a GregorianCalendar object and set the newDate
+        GregorianCalendar calendar = new GregorianCalendar();
+        calendar.setTime(newDate);
+ 
+        return calendar; 
 	}
+	
 	/**
-	 * TODO: createZDateFromString method
-     * Return date from string
-     * @param dateTimeStr
-     * @return ZonedDateTime date from string
+	 * createZDateFromString method that returns a ZonedDateTime object based on the date
+     * @param dateTimeStr String that represents the date_Time
+     * @return ZonedDateTime object that represents the date_Time
      */
 	public ZonedDateTime createZDateFromString(String dateTimeStr) 
 	{
-		ZonedDateTime time = ZonedDateTime.parse(dateTimeStr, format);
-		return time;
+		// set the format and create a zonedatetime object
+		format = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
+		ZonedDateTime zdt = ZonedDateTime.parse(dateTimeStr, format);
+		
+		return zdt;
 	}
 	
 	/**
-	 * TODO: createStringFromDate method
-     * Return string from date
-     * @param calendar from GregorianCalendar
-     * @return String date from GregorianCalendar
+	 * createStringFromDate method that returns a String that represents the date based on calendar
+     * @param calendar GregorianCalendar object that represents a date
+     * @return String that represents the date
      */
 	public String createStringFromDate(GregorianCalendar calendar) 
 	{
-		String out = calendar.getTime().toString();
-		return out;
+		 SimpleDateFormat stringFromData = new SimpleDateFormat(DATE_TIME_FORMAT);
+	     
+		 // create String to store the date in format
+	     String date = stringFromData.format(calendar.getTime());
+
+	     return date;
+
 	}
 	
 	/**
-	 * TODO: createStringFromDate method
-     * Return string from date
-     * @param calendar from ZonedDateTime
-     * @return String date from ZonedDateTime
+	 * createStringFromDate method that returns a String that represents the date based on ZonedDateTime
+     * @param calendar ZonedDateTime object that represents a date
+     * @return String that represents the date
      */
 	public String createStringFromDate(ZonedDateTime calendar) 
 	{
-		String outZ = calendar.format(format);
-		return outZ;
+		 format  = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
+		 
+		 // create String to store the date in format
+	     String date = format.format(calendar); 
+	     
+	     return date;
 	}
 	
 	/**
-	 * TODO: getNumberOfReportingStations method
-     * Return number of reporting stations
+	 * Getter that returns the number of reporting stations
      * @return int get number of reporting stations
      */
 	public int getNumberOfReportingStations() 
@@ -110,9 +159,8 @@ public class Statistics extends Observation
 	}
 	
 	/**
-	 * TODO: getUTCDateTimeString method
-     * Return UTC date and time
-     * @return String UTC date and time
+	 * Getter that returns UTCDate in a String 
+     * @return String representing the UTC Date and Time
      */
 	public String getUTCDateTimeString() 
 	{
@@ -122,11 +170,12 @@ public class Statistics extends Observation
 	/**
 	 * newerThan method
      * Return true if newer than utc date time, else false
+     * @param inDateTime gregorianCalendar to compare
      * @return boolean for if newer Than
      */
 	public boolean newerThan(GregorianCalendar inDateTime) 
 	{
-		if (inDateTime.compareTo(utcDateTime) > 0)
+		if (utcDateTime.compareTo(inDateTime) > 0)
 		{
 		    return true;
 		}
@@ -139,11 +188,12 @@ public class Statistics extends Observation
 	/**
 	 * olderThan method
      * Return true if older than utc date time, else false
+     * @param inDateTime gregorianCalendar to compare
      * @return boolean for if older than
      */
 	public boolean olderThan(GregorianCalendar inDateTime) 
 	{
-		if (inDateTime.compareTo(utcDateTime) < 0)
+		if (utcDateTime.compareTo(inDateTime) < 0)
 		{
 		    return true;
 		}
@@ -156,6 +206,7 @@ public class Statistics extends Observation
 	/**
 	 * sameAs method
      * Return true if same as utc date time, else false
+     * @param inDateTime gregorianCalendar to compare
      * @return boolean for if same as
      */
 	public boolean sameAs(GregorianCalendar inDateTime) 
@@ -171,13 +222,14 @@ public class Statistics extends Observation
 	}
 	
 	/**
-	 * TODO: newerThan method
-     * Return newerThan
-     * @return boolean for if newer Than
+	 * newerThan method for ZonedDateTime
+     * Return true if newer than zdt date time, else false
+     * @param inDateTime ZonedDateTime to compare
+     * @return boolean for if same as
      */
 	public boolean newerThan(ZonedDateTime inDateTime) 
 	{
-		if (inDateTime.compareTo(zdtDateTime) > 0)
+		if (zdtDateTime.compareTo(inDateTime) > 0)
 		{
 		    return true;
 		}
@@ -188,13 +240,14 @@ public class Statistics extends Observation
 	}
 	
 	/**
-	 * TODO: olderThan method
-     * Return olderThan
-     * @return boolean for if older than
+	 * olderThan method for ZonedDateTime
+     * Return true if older than zdt date time, else false
+     * @param inDateTime ZonedDateTime to compare
+     * @return boolean for if same as
      */
 	public boolean olderThan(ZonedDateTime inDateTime) 
 	{
-		if (inDateTime.compareTo(zdtDateTime) < 0)
+		if (zdtDateTime.compareTo(inDateTime) < 0)
 		{
 		    return true;
 		}
@@ -205,8 +258,9 @@ public class Statistics extends Observation
 	}
 	
 	/**
-	 * TODO: sameAs method
-     * Return sameAs
+	 * sameAs method for ZonedDateTime
+     * Return true if same as zdt date time, else false
+     * @param inDateTime ZonedDateTime to compare
      * @return boolean for if same as
      */
 	public boolean sameAs(ZonedDateTime inDateTime) 
@@ -222,12 +276,12 @@ public class Statistics extends Observation
 	}
 	
 	/**
-	 * toString method that outputs the specified format of information
+	 * toString method that outputs the information
+	 * @return String holding the informatin about the Observation data
 	 */
 	 @Override
-	    public String toString()
-	    {
-	            return "";
-
-	    }
+	 public String toString()
+	 {
+		 return "Station: " + getStid() + " | Value: " + getValue();
+	 }
 }

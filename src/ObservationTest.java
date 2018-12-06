@@ -50,6 +50,6 @@ public class ObservationTest
 	public void toStringTest()
 	{
 		Observation actual = new Observation(-999, "COOL");	
-		Assert.assertEquals("blagh", actual.toString());
+		Assert.assertEquals("Station: COOL | Value: -999.0", actual.toString());
 	}
 }

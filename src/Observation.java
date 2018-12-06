@@ -1,4 +1,3 @@
-
 /**
  * Class that represents the data for ta9m, tair and srad
  * Represents one individual value for ta9m, tair, or srad
@@ -39,11 +38,11 @@ public class Observation extends AbstractObservation
 	}
 	/**
      * Return true if the value is less than or equal to -900
-     * @return boolean valid
+     * @return boolean valid 
      */
 	public boolean isValid()
 	{
-		if (value <= -900)
+		if (value <= -900) // check if less than or equal to -900
         {
             valid = false;
         }

@@ -1,12 +1,20 @@
-
+/**
+ * Abstract class that represents Observation
+ * 
+ * @author Miki Cheng
+ * @version 2018-10-04
+ */
 public abstract class AbstractObservation {
 	
-	public boolean valid;
+	protected boolean valid;
 	
 	public AbstractObservation()
 	{
-		
+		valid = true;
 	}
 	
-	public abstract boolean isValid();
+	public boolean isValid()
+	{
+		 return valid;
+	}
 }
